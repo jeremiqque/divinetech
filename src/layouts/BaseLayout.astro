@@ -1,0 +1,69 @@
+---
+import { Font } from "astro:assets";
+import "@/styles/global.css";
+import { site } from "@/config/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = site.tagline } = Astro.props;
+const pageTitle = title ? `${title} | ${site.name}` : site.name;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{pageTitle}</title>
+    <script is:inline>document.documentElement.classList.add("js");</script>
+    <meta name="theme-color" content="#14100d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "HomeAndConstructionBusiness",
+      name: site.name,
+      description: site.tagline,
+      telephone: site.contact.phone,
+      areaServed: "Nigeria",
+      makesOffer: ["Aluminium windows", "Aluminium doors", "Glass installations", "Aluminium roofing", "Metro tiles", "Longspan roofing", "Handrails", "Glass cubicles"],
+    })} />
+    <Font cssVariable="--font-clash-grotesk" preload />
+    <Font cssVariable="--font-general-sans" preload />
+  </head>
+  <body>
+    <slot />
+    <script>import "@/scripts/smooth-scroll";</script>
+    <!-- Fade-in as sections scroll into view (runs before first paint so nothing flashes) -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+        var sel = ".section-title,.section-sub,.hero-title,.hero-sub,.cta-title,.pill-label,section ol > li,section .grid > *,[data-reveal]";
+        var els = [].filter.call(document.querySelectorAll(sel), function (el) {
+          return !el.closest("footer,header,.tw-grid,[data-no-reveal]");
+        });
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+          });
+        }, { threshold: 0.05 });
+        els.forEach(function (el) {
+          var idx = [].indexOf.call(el.parentElement.children, el);
+          el.style.setProperty("--rd", Math.min(idx, 5) * 80 + "ms");
+          el.classList.add("reveal");
+          io.observe(el);
+        });
+        [].forEach.call(document.querySelectorAll("img.fade-img"), function (i) { if (i.complete && i.naturalWidth) i.classList.add("is-loaded"); });
+        setTimeout(function () { els.forEach(function (el) { if (!el.classList.contains("in") && el.getBoundingClientRect().top < innerHeight) el.classList.add("in"); }); }, 1500);
+        d.classList.add("js-reveal");
+      })();
+    </script>
+  </body>
+</html>
