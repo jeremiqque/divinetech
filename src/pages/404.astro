@@ -1,0 +1,35 @@
+---
+import { accent } from "@/lib/accent";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import PillLabel from "@/components/PillLabel.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import NotFoundScene from "@/components/illustrations/NotFoundScene.astro";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, Home01Icon } from "@hugeicons/core-free-icons";
+import { nav, quoteCta } from "@/config/site";
+---
+
+<BaseLayout title="Page not found" description="This page could not be found.">
+  <div class="bg-diagonal-lines pb-16 md:pb-[100px]">
+    <Navbar />
+    <section class="mx-auto mt-10 flex max-w-[860px] flex-col items-center gap-6 px-5 text-center md:mt-14">
+      <PillLabel>Error 404</PillLabel>
+      <div class="w-full max-w-[760px]"><NotFoundScene /></div>
+      <h1 class="hero-title max-sm:!text-[30px]" set:html={accent("Looks like this page was never *installed.*")}></h1>
+      <p class="hero-sub mx-auto max-w-[560px]">The link may be broken, or the page may have moved. Let's get you back to something solid.</p>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <LinkButton href="/" variant="dark"><HugeiconsIcon icon={Home01Icon} size={20} /> Back to home</LinkButton>
+        <LinkButton href={quoteCta.href} variant="light">{quoteCta.label} <HugeiconsIcon icon={ArrowRight02Icon} size={20} /></LinkButton>
+      </div>
+      <p class="mt-0 text-sm text-body">
+        Or try:{" "}
+        {nav.filter((n) => n.href !== "/").map((n, i) => (
+          <>{i > 0 && " · "}<a href={n.href} class="underline underline-offset-4 hover:opacity-70 inline-block px-1 py-3">{n.label}</a></>
+        ))}
+      </p>
+    </section>
+  </div>
+  <Footer />
+</BaseLayout>
