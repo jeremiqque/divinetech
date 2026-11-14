@@ -1,0 +1,165 @@
+---
+import { accent } from "@/lib/accent";
+import ProcessIllustration from "@/components/illustrations/ProcessIllustration.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import QuoteBanner from "@/components/QuoteBanner.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import ServiceCard from "@/components/ServiceCard.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import ImagePlaceholder from "@/components/ImagePlaceholder.astro";
+import PillLabel from "@/components/PillLabel.astro";
+import TestimonialWall from "@/components/TestimonialWall.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import TrustStrip from "@/components/TrustStrip.astro";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowRight02Icon, WhatsappIcon, Award01Icon, PaintBrush01Icon, Shield01Icon, RulerIcon,
+} from "@hugeicons/core-free-icons";
+import {
+  services, whyDivintech, process,
+  site, homeImages, serviceDetails, whatsappLink, quoteCta,
+} from "@/config/site";
+import { featuredProjects, projectHref, serviceTitle } from "@/config/projects";
+
+const icons = { award: Award01Icon, paint: PaintBrush01Icon, shield: Shield01Icon, ruler: RulerIcon };
+---
+
+<BaseLayout
+  title="Aluminium windows, doors, glass and roofing"
+  description="Divintech Aluminium supplies and installs aluminium windows and doors, glass, roofing, metro tiles, handrails and glass cubicles for homes and businesses. Request a quote on WhatsApp or call."
+>
+  <!-- 1. HERO -->
+  <div class="bg-diagonal-lines pb-16 md:pb-[100px]">
+    <Navbar />
+    <section class="mx-auto mt-16 max-w-[684px] px-5 text-center md:mt-[100px]">
+      <h1 class="hero-title max-sm:!text-[32px]" set:html={accent("Aluminium windows, doors, glass and roofing, *done right.*")}></h1>
+      <p class="hero-sub mx-auto mt-[18px] max-w-[648px]">
+        Premium solutions for homes, offices and commercial spaces. Tell us what you need and we'll recommend the right solution and send your quotation.
+      </p>
+    </section>
+    <div class="mx-auto mt-8 flex w-full max-w-[420px] flex-col items-stretch justify-center gap-2.5 px-5 sm:max-w-none sm:flex-row sm:items-center md:mt-[44px]">
+      <LinkButton href={quoteCta.href} variant="dark" class="max-sm:w-full max-sm:[&>span]:w-full">Get a Quote</LinkButton>
+      <LinkButton href={whatsappLink()} variant="light" external class="max-sm:w-full"><HugeiconsIcon icon={WhatsappIcon} size={20} /> Chat on WhatsApp</LinkButton>
+    </div>
+    <p class="mt-4 px-5 text-center text-[15px] text-body">
+      Prefer to talk? <a href={`tel:${site.contact.phone.replace(/\s+/g, "")}`} class="inline-flex min-h-11 items-center font-medium text-black underline decoration-accent decoration-2 underline-offset-4 hover:opacity-70">Call {site.contact.phoneLocal}</a>
+    </p>
+    <div data-reveal class="mx-auto mt-12 w-full max-w-[1582px] px-5 md:mt-[92px] md:px-8 min-[1650px]:px-0">
+      <ImagePlaceholder src={homeImages.hero} alt="Divintech aluminium, glass and roofing project" label="Hero image or video" class="aspect-[1582/640] w-full max-md:aspect-[4/3]" />
+    </div>
+    <div data-reveal class="mt-5 md:mt-8"><TrustStrip /></div>
+  </div>
+
+  <!-- 3. SERVICES -->
+  <section class="site-container py-16 md:py-[90px]">
+    <SectionHeading
+      label="Services"
+      title="Solutions designed around *your space.*"
+      sub="Whether you're building from the ground up, renovating or giving your property a modern upgrade, we provide solutions tailored to your project."
+    />
+    <div class="mx-auto mt-12 grid max-w-[1469px] gap-5 sm:grid-cols-2 lg:grid-cols-4 md:mt-[52px]">
+      {services.map((s, i) => (
+        <ServiceCard variant="tile" number={i + 1} title={s.title} description={s.summary} href={`/services#${s.slug}`} image={serviceDetails[s.slug].image} />
+      ))}
+    </div>
+    <div class="mt-12 flex justify-center">
+      <LinkButton href="/services" variant="dark">See all services <HugeiconsIcon icon={ArrowRight02Icon} size={20} /></LinkButton>
+    </div>
+  </section>
+
+  <!-- 4. FEATURED PROJECTS -->
+  <section class="site-container py-16 md:py-[90px]">
+    <SectionHeading
+      label="Selected Work"
+      title="See the work for *yourself.*"
+      sub="From aluminium windows and doors to roofing and glass installations, explore some of our completed work."
+    />
+    <div class="mx-auto mt-12 grid max-w-[1469px] gap-5 md:mt-[52px] md:grid-cols-2 md:gap-[42px]">
+      {featuredProjects.map((p) => (
+        <ProjectCard title={p.title} service={serviceTitle(p.service)} location={p.location} href={projectHref(p)} image={p.image} />
+      ))}
+    </div>
+    <div class="mt-12 flex justify-center">
+      <LinkButton href="/projects" variant="dark">View All Projects <HugeiconsIcon icon={ArrowRight02Icon} size={20} /></LinkButton>
+    </div>
+  </section>
+
+  <!-- 5. WHY DIVINTECH (copy from brief; layout is a first draft in the same style) -->
+  <section class="bg-diagonal-lines py-16 md:py-[100px]">
+    <div class="site-container">
+      <SectionHeading
+        label="Why Divintech"
+        title="Built with attention to *every detail.*"
+        sub="Your building deserves more than a quick installation. It deserves work that looks right, functions properly and stands the test of time."
+      />
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 md:mt-[52px]">
+        {whyDivintech.map((item) => (
+          <div class="flex flex-col gap-10 rounded-card bg-white p-8">
+            <span class="flex size-14 items-center justify-center rounded-nav bg-line text-black">
+              <HugeiconsIcon icon={icons[item.icon]} size={26} />
+            </span>
+            <div class="flex flex-col gap-3">
+              <h3 class="font-heading text-2xl text-black">{item.title}</h3>
+              <p class="text-base leading-normal text-body">{item.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. PROCESS (copy from brief; layout is a first draft in the same style) -->
+  <section id="process" class="site-container scroll-mt-8 py-16 md:py-[100px]">
+    <SectionHeading label="Process" title="From idea to *installation.*" sub="We keep the process straightforward." />
+    <ol class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 md:mt-[52px]">
+      {process.map((step, i) => (
+        <li class="flex flex-col gap-8 rounded-card bg-ink p-6 text-white md:p-7">
+          <div class="relative aspect-[320/190] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#1b1b1b] to-[#0e0e0e]">
+            <ProcessIllustration step={(i + 1) as 1 | 2 | 3 | 4} />
+            <span class="absolute left-3 top-3 w-fit rounded-full border border-accent/30 bg-accent/15 px-3 py-[3px] font-heading text-[15px] text-[#e2b48f]">{String(i + 1).padStart(2, "0")}</span>
+          </div>
+          <div class="flex flex-col gap-3">
+            <h3 class="font-heading text-2xl">{step.title}</h3>
+            <p class="text-sm leading-normal text-card-text">{step.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+    <div class="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+      <LinkButton href={quoteCta.href} variant="dark">Start with step one</LinkButton>
+      <LinkButton href={whatsappLink()} variant="light" external><HugeiconsIcon icon={WhatsappIcon} size={20} /> Chat on WhatsApp</LinkButton>
+    </div>
+  </section>
+
+  <!-- 7. TESTIMONIALS (made-up quotes for now: edit them in src/config/site.ts) -->
+  <TestimonialWall />
+
+  <!-- 2. INTRO / BRAND STATEMENT -->
+  <section class="site-container py-16 md:py-[100px]">
+    <div class="flex flex-col items-start gap-6">
+      <PillLabel withArrow>About Divintech</PillLabel>
+      <div class="flex flex-col gap-[19px]">
+        <h2 class="font-heading text-[30px] leading-[1.2] tracking-[-0.9px] text-black md:text-[45px]">Quality materials. Precise installation. Beautiful results.</h2>
+        <div class="flex flex-col gap-4 text-lg leading-[1.3] tracking-[-0.4px] text-black md:text-[30px] md:tracking-[-0.6px]">
+          <p>At Divintech Aluminium, we transform architectural ideas into finished spaces through quality aluminium, glass and roofing solutions.</p>
+          <p>From sleek aluminium windows and doors to roofing systems and custom glass installations, we combine functionality, durability and modern design to deliver work built to last.</p>
+        </div>
+      </div>
+      <LinkButton href="/about" variant="dark">
+        Discover Divintech <HugeiconsIcon icon={ArrowRight02Icon} size={20} />
+      </LinkButton>
+    </div>
+    <div class="no-scrollbar -mx-5 mt-12 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 md:mx-0 md:mt-[60px] md:grid md:grid-cols-3 md:gap-[42px] md:overflow-visible md:px-0">
+      {homeImages.intro.map((src) => (
+        <ImagePlaceholder src={src} label="Image" class="aspect-[477/465] max-md:aspect-[4/5] max-md:w-[78%] max-md:shrink-0 max-md:snap-center" />
+      ))}
+    </div>
+  </section>
+
+  <!-- 8. FINAL CTA -->
+  <QuoteBanner />
+
+  <Footer />
+</BaseLayout>
