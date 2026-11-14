@@ -1,0 +1,87 @@
+---
+import { accent } from "@/lib/accent";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import PillLabel from "@/components/PillLabel.astro";
+import QuoteForm from "@/components/QuoteForm";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { WhatsappIcon, Call02Icon, Location01Icon, ArrowRight02Icon } from "@hugeicons/core-free-icons";
+import { site, whatsappLink, quoteForm, projectTypes, serviceToProjectType } from "@/config/site";
+
+const tel = `tel:${site.contact.phone.replace(/\s+/g, "")}`;
+const options = [
+  { icon: WhatsappIcon, title: "WhatsApp", text: "The fastest way to reach us. Send your plans, photos or measurements and chat directly with our team.", cta: "Chat on WhatsApp", href: whatsappLink(), external: true },
+  { icon: Call02Icon, title: "Phone", text: "Prefer to speak to someone? Call us to talk through your project.", cta: `Call ${site.contact.phoneLocal}`, href: tel, external: false },
+  { icon: Location01Icon, title: "Visit / Location", text: site.contact.address, cta: "", href: "", external: false },
+];
+---
+
+<BaseLayout
+  title="Contact"
+  description="Tell us about your aluminium, glass or roofing project and we'll get back to you with the right solution."
+>
+  <div class="bg-diagonal-lines pb-16 md:pb-[100px]">
+    <Navbar />
+
+    <section class="mx-auto mt-14 flex max-w-[684px] flex-col items-center gap-[18px] px-5 text-center md:mt-[68px]">
+      <PillLabel>Contact</PillLabel>
+      <h1 class="hero-title max-sm:!text-[32px]" set:html={accent("Your project starts with a *conversation.*")}></h1>
+      <p class="hero-sub mx-auto max-w-[648px]">Message us on WhatsApp, give us a call, or fill in the form below. Tell us what you need and we'll come back with the right solution for your space.</p>
+    </section>
+
+    <!-- Colorful banner holding the contact options and the quote form -->
+    <div class="mx-auto mt-12 w-full max-w-[1532px] px-5 md:mt-[86px] md:px-8 min-[1600px]:px-0">
+      <div class="contact-wash relative overflow-hidden rounded-[20px] p-4 md:p-10 lg:p-14">
+        <div class="relative grid gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-6">
+          <div class="flex flex-col gap-4">
+            {options.map((o) => (
+              <div class="flex flex-col gap-3 rounded-[20px] bg-white/80 p-6 backdrop-blur-md md:p-7">
+                <span class="flex size-12 items-center justify-center rounded-nav bg-white text-black shadow-sm">
+                  <HugeiconsIcon icon={o.icon} size={24} />
+                </span>
+                <h2 class="font-heading text-2xl text-black">{o.title}</h2>
+                <p class="text-base leading-normal text-body">{o.text}</p>
+                {o.cta && (
+                  <a
+                    href={o.href}
+                    {...(o.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    class="mt-1 inline-flex min-h-11 w-fit items-center gap-2 font-heading text-lg text-black hover:opacity-70"
+                  >
+                    {o.cta} <HugeiconsIcon icon={ArrowRight02Icon} size={22} />
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div id="quote" class="scroll-mt-8 rounded-[20px] bg-white p-6 shadow-[0_24px_60px_rgba(0,0,0,0.12)] md:p-9">
+            <QuoteForm
+              client:load
+              endpoint={quoteForm.endpoint}
+              accessKey={quoteForm.accessKey}
+              whatsappNumber={site.contact.whatsappNumber}
+              projectTypes={projectTypes}
+              serviceToType={serviceToProjectType}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Soft colorful wash recreated in code (pink, orange, yellow, teal, blue) */
+  .contact-wash {
+    background-color: #ff7448;
+    background-image:
+      radial-gradient(60% 70% at 4% 92%, #ffe3e6 0%, rgba(255, 227, 230, 0) 70%),
+      radial-gradient(40% 55% at 78% 100%, #fbd53c 0%, rgba(251, 213, 60, 0) 72%),
+      radial-gradient(42% 60% at 100% 55%, #97bfd8 0%, rgba(151, 191, 216, 0) 75%),
+      radial-gradient(34% 40% at 92% 22%, #b9dccb 0%, rgba(185, 220, 203, 0) 70%),
+      radial-gradient(40% 40% at 88% 0%, #f9a553 0%, rgba(249, 165, 83, 0) 70%);
+  }
+</style>
