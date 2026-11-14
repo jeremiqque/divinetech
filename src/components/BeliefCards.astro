@@ -1,0 +1,89 @@
+---
+/**
+ * "Built around three things": Quality, Precision, Design.
+ * Layout and colors follow the Figma bento (one tall card on the left, two stacked on the right).
+ * The pictures are architectural drawings made in code.
+ */
+import QualityLayers from "./illustrations/QualityLayers.astro";
+import PrecisionSheets from "./illustrations/PrecisionSheets.astro";
+import DesignTiles from "./illustrations/DesignTiles.astro";
+import { beliefs } from "@/config/site";
+
+const look = {
+  quality: { bg: "#0E0F11", border: "#3FA02B", text: "#5AF63A", Art: QualityLayers },
+  precision: { bg: "#17110d", border: "#FE640B", text: "#FF7A2B", Art: PrecisionSheets },
+  design: { bg: "#0d1220", border: "#2067F5", text: "#4B86FF", Art: DesignTiles },
+} as const;
+---
+
+<div class="mx-auto grid max-w-[1424px] gap-4 lg:grid-cols-2 lg:grid-rows-2">
+  {beliefs.map((b, i) => {
+    const l = look[b.key];
+    const Art = l.Art;
+    const tall = i === 0;
+    return (
+      <article
+        class:list={["belief relative isolate overflow-hidden rounded-[3px] border", tall ? "lg:row-span-2 lg:min-h-[665px]" : "lg:min-h-[324px]"]}
+        style={`--accent:${l.text};background-color:${l.bg};border-color:${l.border}`}
+      >
+        {tall && <div aria-hidden="true" class="hatch pointer-events-none absolute inset-0 -z-10"></div>}
+
+        <div class:list={["relative z-10 flex flex-col items-start gap-5 p-6 md:p-[30px]", tall ? "lg:max-w-[460px]" : "lg:max-w-[340px] xl:max-w-[360px]"]}>
+          <div class="flex flex-col gap-2.5">
+            <h3 class="font-heading text-[22px] leading-tight text-white md:text-2xl">{b.title}</h3>
+            <p class="text-base leading-normal text-white/65">{b.text}</p>
+          </div>
+          <a href={b.cta.href} class="bracket-btn mt-2 md:mt-5">{b.cta.label}</a>
+        </div>
+
+        <div
+          aria-hidden="false"
+          class:list={[
+            "relative", !tall && b.key === "design" && "fade-left",
+            tall
+              ? "mt-4 h-[300px] lg:absolute lg:inset-x-0 lg:bottom-0 lg:mt-0 lg:h-[430px]"
+              : "-mt-2 flex h-[300px] justify-center sm:ml-auto sm:max-w-[560px] sm:justify-end lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:h-auto lg:w-[47%] lg:max-w-none",
+          ]}
+        >
+          <Art />
+        </div>
+      </article>
+    );
+  })}
+</div>
+
+<style>
+  .fade-left {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 22%);
+  }
+  .hatch {
+    background-image: repeating-linear-gradient(118deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 13px);
+    -webkit-mask-image: linear-gradient(180deg, transparent 20%, #000 75%);
+    mask-image: linear-gradient(180deg, transparent 20%, #000 75%);
+  }
+  /* Outlined button with small squares on the four corners, as in the Figma design */
+  .bracket-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 51px;
+    padding-inline: 24px;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    transition: background 0.2s;
+    --c: 4px;
+    background-image:
+      linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent)),
+      linear-gradient(var(--accent), var(--accent)), linear-gradient(var(--accent), var(--accent));
+    background-size: var(--c) var(--c);
+    background-repeat: no-repeat;
+    background-position: -1px -1px, calc(100% + 1px) -1px, -1px calc(100% + 1px), calc(100% + 1px) calc(100% + 1px);
+    background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .bracket-btn:hover { background-color: color-mix(in srgb, var(--accent) 20%, transparent); }
+  .bracket-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+</style>

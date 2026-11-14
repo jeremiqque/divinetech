@@ -1,0 +1,58 @@
+---
+/** Three overlapping drafting sheets (window, door, roof) with measurements. Isometric, drawn in code. */
+const sheets = [
+  { tab: "WINDOW", tx: 300, ty: 150, kind: "window", w: "1200", h: "1500" },
+  { tab: "DOOR", tx: 160, ty: 250, kind: "door", w: "900", h: "2100" },
+  { tab: "ROOF", tx: 20, ty: 350, kind: "roof", w: "6000", h: "22°" },
+] as const;
+const mono = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+const M = "matrix(0.866 -0.5 0 1";
+---
+
+<svg viewBox="0 -150 450 540" preserveAspectRatio="xMaxYMax meet" class="h-full w-auto shrink-0" fill="none" role="img" aria-label="Drafting sheets for a window, a door and a roof with measurements">
+  {sheets.map((s) => (
+    <g transform={`${M} ${s.tx} ${s.ty})`}>
+      <!-- sheet and tab -->
+      <rect x="0" y="-210" width="150" height="230" fill="#FE640B" fill-opacity="0.10" stroke="#FE640B" stroke-width="1.8" />
+      <rect x="0" y="-234" width="84" height="24" fill="#FE640B" fill-opacity="0.38" stroke="#FE640B" stroke-width="1.8" />
+      <text x="8" y="-216" font-family={mono} font-size="14" letter-spacing="1" fill="#ffd9c0">{s.tab}</text>
+
+      <!-- drawing -->
+      {s.kind === "window" && (
+        <g stroke="#ffb888" stroke-width="1.7">
+          <rect x="30" y="-170" width="90" height="110" fill="#FE640B" fill-opacity="0.08" />
+          <rect x="37" y="-163" width="76" height="96" />
+          <line x1="75" y1="-163" x2="75" y2="-67" />
+          <line x1="37" y1="-115" x2="113" y2="-115" />
+          <line x1="44" y1="-100" x2="62" y2="-118" stroke-opacity="0.5" />
+        </g>
+      )}
+      {s.kind === "door" && (
+        <g stroke="#ffb888" stroke-width="1.7">
+          <rect x="45" y="-176" width="60" height="118" fill="#FE640B" fill-opacity="0.08" />
+          <rect x="53" y="-168" width="44" height="46" />
+          <rect x="53" y="-114" width="44" height="48" />
+          <circle cx="92" cy="-114" r="2.4" fill="#ffb888" />
+        </g>
+      )}
+      {s.kind === "roof" && (
+        <g stroke="#ffb888" stroke-width="1.7">
+          <polyline points="22,-92 75,-142 128,-92" />
+          <line x1="22" y1="-92" x2="128" y2="-92" />
+          <polyline points="34,-92 34,-62 116,-62 116,-92" stroke-opacity="0.55" />
+          <path d="M45 -92 A 24 24 0 0 0 40 -104" stroke-opacity="0.7" />
+          {[0, 1, 2, 3].map((n) => <line x1={50 + n * 12} y1={-120 + n * 0} x2={50 + n * 12} y2={-92} stroke-opacity="0.18" />)}
+        </g>
+      )}
+
+      <!-- dimension lines -->
+      <g stroke="#FE640B" stroke-width="1" stroke-opacity="0.9">
+        <line x1="22" y1="-40" x2="128" y2="-40" />
+        <line x1="22" y1="-46" x2="22" y2="-34" />
+        <line x1="128" y1="-46" x2="128" y2="-34" />
+      </g>
+      <text x="75" y="-26" text-anchor="middle" font-family={mono} font-size="15" fill="#ffcfae">{s.w}{s.kind === "roof" ? "" : " mm"}</text>
+      <text x="75" y="-8" text-anchor="middle" font-family={mono} font-size="13" fill="#ff9a5c" fill-opacity="0.8">{s.kind === "roof" ? `PITCH ${s.h}` : `H ${s.h}`}</text>
+    </g>
+  ))}
+</svg>

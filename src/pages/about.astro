@@ -1,0 +1,87 @@
+---
+import { accent } from "@/lib/accent";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import QuoteBanner from "@/components/QuoteBanner.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import ImagePlaceholder from "@/components/ImagePlaceholder.astro";
+import PillLabel from "@/components/PillLabel.astro";
+import BeliefCards from "@/components/BeliefCards.astro";
+import { capabilities, aboutImages } from "@/config/site";
+
+---
+
+<BaseLayout
+  title="About"
+  description="Divintech Aluminium provides aluminium, glass and roofing solutions for modern residential and commercial spaces."
+>
+  <!-- HERO -->
+  <div class="bg-diagonal-lines pb-16 md:pb-[100px]">
+    <Navbar />
+    <section class="mx-auto mt-16 max-w-[684px] px-5 text-center md:mt-[100px]">
+      <h1 class="hero-title max-sm:!text-[32px]" set:html={accent("We build the details that make a space *feel complete.*")}></h1>
+      <p class="hero-sub mx-auto mt-[18px] max-w-[648px]">
+        Divintech Aluminium provides aluminium, glass and roofing solutions for modern residential and commercial spaces.
+      </p>
+    </section>
+    <div class="mx-auto mt-12 w-full max-w-[1582px] px-5 md:mt-[90px] md:px-8 min-[1650px]:px-0">
+      <ImagePlaceholder src={aboutImages.hero} alt="Divintech Aluminium team at work" label="Hero image" class="aspect-[1582/551] w-full max-md:aspect-[4/3]" />
+    </div>
+  </div>
+
+  <!-- ABOUT STATEMENT -->
+  <section class="site-container py-16 md:py-[100px]">
+    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-[80px]">
+      <div class="flex flex-col items-start gap-6">
+        <PillLabel withArrow>Who we are</PillLabel>
+        <h2 class="font-heading text-[32px] leading-[1.2] tracking-[-0.9px] text-black md:text-[40px]">More than installation. It's craftsmanship.</h2>
+        <div class="flex flex-col gap-5 text-lg leading-[1.5] text-black md:text-[22px]">
+          <p>The windows, doors, roofing and architectural details of a building have a major impact on how it looks, functions and feels.</p>
+          <p>That's why our approach goes beyond simply supplying materials.</p>
+          <p>We focus on creating solutions that fit the space, complement the architecture and deliver the functionality our clients need.</p>
+          <p>From the first conversation through measurement, recommendation and installation, we aim to make every project straightforward and professionally executed.</p>
+        </div>
+      </div>
+      <ImagePlaceholder src={aboutImages.statement} alt="Divintech installation" label="Image" class="aspect-[4/3] w-full" />
+    </div>
+  </section>
+
+  <!-- WHAT WE BELIEVE -->
+  <section class="site-container py-16 md:py-[90px]">
+    <SectionHeading label="What we believe" withArrow title="Built around *three things.*" />
+    <div class="mt-12 md:mt-[60px]">
+      <BeliefCards />
+    </div>
+  </section>
+
+  <!-- CAPABILITIES -->
+  <section class="site-container py-16 md:py-[90px]">
+    <SectionHeading label="Our capabilities" title="One partner for *multiple building solutions.*" />
+    <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-6 md:mt-[60px]">
+      {capabilities.map((c, i) => (
+        <a
+          href={`/services#${c.slug}`}
+          class:list={["group relative block overflow-hidden rounded-[20px] bg-ink", i < 6 ? "lg:col-span-2" : "lg:col-span-3"]}
+        >
+          <div class:list={["relative w-full", i < 6 ? "aspect-[486/436]" : "aspect-[744/436]"]}>
+            {c.image ? (
+              <img src={c.image} alt={c.label} class="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+            ) : (
+              <span class="absolute inset-0 flex items-center justify-center text-sm text-white/25">Photo</span>
+            )}
+          </div>
+          <div class="flex h-14 items-center justify-center bg-[#292929] text-base text-white md:h-[72px]">{c.label}</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <QuoteBanner
+    title="Have a project in mind?"
+    sub="Tell us what you're building and we'll recommend the right solution."
+    label="Start a Project"
+    href="/contact#quote"
+  />
+  <Footer />
+</BaseLayout>
