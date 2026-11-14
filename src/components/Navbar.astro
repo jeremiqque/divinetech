@@ -1,0 +1,41 @@
+---
+import { nav, quoteCta, site } from "@/config/site";
+import LinkButton from "./LinkButton.astro";
+import MobileMenu from "./MobileMenu";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isActive = (href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(href + "/"));
+const current = nav.find((n) => isActive(n.href))?.href ?? "";
+---
+
+<header class="relative z-40 pt-[39px]">
+  <div class="site-container">
+    <div class="relative grid grid-cols-[1fr_auto] items-center lg:grid-cols-[1fr_auto_1fr]">
+      <a href="/" class="block w-fit" aria-label={`${site.name} home`}>
+        <img src={site.logo.src} alt={site.logo.alt} width="67" height="56" class="h-14 w-[67px] rounded-[11px]" />
+      </a>
+
+      <nav aria-label="Main" class="hidden items-center rounded-nav bg-white p-1 lg:flex">
+        {nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isActive(item.href) ? "page" : undefined}
+            class:list={[
+              "rounded-button px-3 py-3.5 text-base leading-normal text-black transition-colors hover:bg-line/70",
+              isActive(item.href) && "bg-line px-3.5 font-medium",
+            ]}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="flex items-center justify-self-end">
+        <div class="hidden lg:block">
+          <LinkButton href={quoteCta.href} variant="dark">{quoteCta.label}</LinkButton>
+        </div>
+        <MobileMenu client:load items={[...nav]} current={current} cta={quoteCta} />
+      </div>
+    </div>
+  </div>
+</header>
