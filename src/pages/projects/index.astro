@@ -1,0 +1,90 @@
+---
+import { accent } from "@/lib/accent";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import QuoteBanner from "@/components/QuoteBanner.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import { projects, projectCategories, serviceCategory, serviceTitle, projectHref } from "@/config/projects";
+---
+
+<BaseLayout
+  title="Projects"
+  description="See aluminium window, door, glass, roofing and handrail projects completed by Divintech Aluminium, then request a quote for yours."
+>
+  <div class="bg-diagonal-lines pb-16 md:pb-[100px]">
+    <Navbar />
+    <section class="mx-auto mt-16 max-w-[684px] px-5 text-center md:mt-[100px]">
+      <h1 class="hero-title max-sm:!text-[32px]" set:html={accent("Spaces we've helped *bring to life.*")}></h1>
+      <p class="hero-sub mx-auto mt-[18px] max-w-[648px]">
+        A look at recent windows, doors, glass, roofing and handrail projects, each built with precision and finished with care.
+      </p>
+    </section>
+
+    <!-- FILTER TABS -->
+    <div class="site-container mt-10 md:mt-[60px]">
+      <div class="-mx-5 flex gap-2 overflow-x-auto px-5 pb-2 md:mx-0 md:flex-wrap md:justify-center md:overflow-visible md:px-0" role="tablist" aria-label="Filter projects">
+        {["All", ...projectCategories].map((c, i) => (
+          <button
+            type="button"
+            role="tab"
+            data-filter={c}
+            aria-selected={i === 0 ? "true" : "false"}
+            class="filter-tab shrink-0 cursor-pointer rounded-full border border-black/10 bg-white px-5 py-3 text-[15px] font-medium text-black transition-colors hover:bg-black/5"
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+
+      <!-- PROJECT GRID -->
+      <div id="project-grid" class="mx-auto mt-8 grid max-w-[1469px] gap-5 md:mt-12 md:grid-cols-2 md:gap-[42px]">
+        {projects.map((p) => (
+          <div data-category={serviceCategory[p.service]}>
+            <ProjectCard title={p.title} service={serviceTitle(p.service)} location={p.location} href={projectHref(p)} image={p.image} />
+          </div>
+        ))}
+      </div>
+      <p id="project-empty" class="mt-12 hidden text-center text-lg text-body">
+        No projects in this category yet. Check back soon.
+      </p>
+    </div>
+  </div>
+
+  <QuoteBanner
+    title="Planning something similar?"
+    sub="Tell us about your project and we'll help you choose the right solution."
+  />
+  <Footer />
+</BaseLayout>
+
+<style>
+  .filter-tab[aria-selected="true"] {
+    background: #141414;
+    border-color: #141414;
+    color: #fff;
+  }
+</style>
+
+<script>
+  // Shows only the projects that match the chosen tab.
+  const tabs = document.querySelectorAll<HTMLButtonElement>(".filter-tab");
+  const items = document.querySelectorAll<HTMLElement>("#project-grid [data-category]");
+  const empty = document.getElementById("project-empty");
+
+  function apply(filter: string) {
+    let shown = 0;
+    items.forEach((el) => {
+      const match = filter === "All" || el.dataset.category === filter;
+      el.classList.toggle("hidden", !match);
+      if (match) shown++;
+    });
+    empty?.classList.toggle("hidden", shown > 0);
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.filter === filter)));
+  }
+
+  tabs.forEach((t) => t.addEventListener("click", () => apply(t.dataset.filter ?? "All")));
+  // Lets links like /projects#Windows open with that tab selected.
+  const fromLink = decodeURIComponent(location.hash.slice(1));
+  if (fromLink && [...tabs].some((t) => t.dataset.filter === fromLink)) apply(fromLink);
+</script>

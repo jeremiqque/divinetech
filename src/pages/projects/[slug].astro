@@ -1,0 +1,116 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import QuoteBanner from "@/components/QuoteBanner.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import ImagePlaceholder from "@/components/ImagePlaceholder.astro";
+import PillLabel from "@/components/PillLabel.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeft02Icon, Tick02Icon } from "@hugeicons/core-free-icons";
+import { projects, serviceTitle, projectHref, type Project } from "@/config/projects";
+
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+const { project } = Astro.props as { project: Project };
+const service = serviceTitle(project.service);
+
+// Gallery: use real photos if added, otherwise show 4 grey boxes.
+const gallery = project.gallery.length ? project.gallery : ["", "", "", ""];
+
+// "More projects": other projects, same service first.
+const more = [...projects.filter((p) => p.slug !== project.slug)]
+  .sort((a, b) => Number(b.service === project.service) - Number(a.service === project.service))
+  .slice(0, 2);
+
+const meta = [
+  { label: "Service", value: service },
+  { label: "Project type", value: project.projectType },
+  { label: "Location", value: project.location },
+];
+---
+
+<BaseLayout title={`${project.title} · Projects`} description={project.story[0]}>
+  <div class="bg-diagonal-lines pb-12 md:pb-[80px]">
+    <Navbar />
+    <section class="mx-auto mt-12 max-w-[900px] px-5 text-center md:mt-[80px]">
+      <a href="/projects" class="mx-auto mb-4 inline-flex min-h-11 items-center gap-1.5 text-sm text-body transition-colors hover:text-black">
+        <HugeiconsIcon icon={ArrowLeft02Icon} size={16} /> All projects
+      </a>
+      <div class="flex justify-center"><PillLabel>{service}</PillLabel></div>
+      <h1 class="hero-title mt-3 max-sm:!text-[32px]">{project.title}</h1>
+    </section>
+
+    <div class="site-container mt-10 md:mt-[56px]">
+      <dl class="mx-auto mb-8 grid max-w-[1100px] grid-cols-1 gap-px overflow-hidden rounded-card bg-black/10 sm:grid-cols-3">
+        {meta.map((m) => (
+          <div class="bg-white px-6 py-5 text-center sm:text-left">
+            <dt class="text-sm text-muted">{m.label}</dt>
+            <dd class="mt-1 font-heading text-lg text-black">{m.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <ImagePlaceholder src={project.image} alt={project.title} label="Main project photo" class="aspect-[16/9] w-full" />
+    </div>
+  </div>
+
+  <!-- THE PROJECT + WHAT WE DELIVERED -->
+  <section class="site-container grid gap-12 py-12 md:py-[80px] lg:grid-cols-[1.4fr_1fr] lg:gap-[80px]">
+    <div class="flex flex-col gap-5">
+      <h2 class="font-heading text-[32px] leading-[1.2] tracking-[-0.9px] text-black md:text-[40px]">The project</h2>
+      <div class="flex flex-col gap-4 text-lg leading-[1.5] text-body md:text-xl">
+        {project.story.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+    <div class="flex flex-col gap-5 rounded-card bg-white p-6 md:p-8">
+      <h2 class="font-heading text-2xl text-black">What we delivered</h2>
+      <ul class="flex flex-col gap-3">
+        {project.delivered.map((d) => (
+          <li class="flex items-start gap-2.5 text-base text-body">
+            <HugeiconsIcon icon={Tick02Icon} size={20} className="mt-0.5 shrink-0 text-black" /> {d}
+          </li>
+        ))}
+      </ul>
+      <LinkButton href={`/contact?service=${project.service}#quote`} variant="dark" class="mt-2 self-start">
+        Request a similar quote
+      </LinkButton>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="site-container pb-12 md:pb-[80px]">
+    <h2 class="mb-6 font-heading text-[32px] leading-[1.2] tracking-[-0.9px] text-black md:mb-8 md:text-[40px]">Gallery</h2>
+    <div class="grid gap-4 md:grid-cols-2 md:gap-6">
+      {gallery.map((src, i) => (
+        <ImagePlaceholder
+          src={src}
+          alt={`${project.title} photo ${i + 1}`}
+          label={`Photo ${i + 1}`}
+          class:list={["w-full", i % 3 === 0 ? "aspect-[16/10] md:col-span-2 md:aspect-[16/8]" : "aspect-[4/3]"]}
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- MORE PROJECTS -->
+  {more.length > 0 && (
+    <section class="site-container pb-8 md:pb-12">
+      <h2 class="mb-6 font-heading text-[32px] leading-[1.2] tracking-[-0.9px] text-black md:mb-8 md:text-[40px]">More projects</h2>
+      <div class="grid gap-5 md:grid-cols-2 md:gap-[42px]">
+        {more.map((p) => (
+          <ProjectCard title={p.title} service={serviceTitle(p.service)} location={p.location} href={projectHref(p)} image={p.image} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <QuoteBanner
+    title="Planning something similar?"
+    sub="Tell us about your project and we'll help you choose the right solution."
+    href={`/contact?service=${project.service}#quote`}
+  />
+  <Footer />
+</BaseLayout>
