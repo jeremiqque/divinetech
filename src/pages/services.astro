@@ -1,0 +1,87 @@
+---
+import { accent } from "@/lib/accent";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Navbar from "@/components/Navbar.astro";
+import Footer from "@/components/Footer.astro";
+import QuoteBanner from "@/components/QuoteBanner.astro";
+import ServiceCard from "@/components/ServiceCard.astro";
+import ImagePlaceholder from "@/components/ImagePlaceholder.astro";
+import PillLabel from "@/components/PillLabel.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, Tick02Icon } from "@hugeicons/core-free-icons";
+import { services, serviceDetails } from "@/config/site";
+---
+
+<BaseLayout
+  title="Services"
+  description="Aluminium windows and doors, glass installations, aluminium roofing, metro tiles, longspan roofing, handrails and glass cubicles. Request a quote on WhatsApp or call."
+>
+  <!-- HERO + OVERVIEW CARDS -->
+  <div class="bg-diagonal-lines pb-16 md:pb-[100px]">
+    <Navbar />
+    <section class="mx-auto mt-16 max-w-[684px] px-5 text-center md:mt-[100px]">
+      <h1 class="hero-title max-sm:!text-[32px]" set:html={accent("Solutions for every part of *your space.*")}></h1>
+      <p class="hero-sub mx-auto mt-[18px] max-w-[648px]">
+        From windows and doors to roofing and custom glass installations, we provide practical solutions designed around your project.
+      </p>
+    </section>
+
+    <div class="site-container mt-12 md:mt-[92px]">
+      <div class="grid gap-[22px] md:grid-cols-2 lg:grid-cols-6">
+        {services.map((s, i) => (
+          <ServiceCard
+            class={i < 6 ? "lg:col-span-2" : "lg:col-span-3"}
+            title={s.title === "Glass Solutions" ? "Glass" : s.title}
+            description={serviceDetails[s.slug].body.join(" ")}
+            href={`#${s.slug}`}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- INDIVIDUAL SERVICE SECTIONS (copy from brief; layout is a first draft in the same style) -->
+  <div class="site-container">
+    {services.map((s, i) => {
+      const d = serviceDetails[s.slug];
+      return (
+        <section id={s.slug} class="scroll-mt-8 border-b border-line py-16 last:border-b-0 md:py-[100px]">
+          <div class:list={["grid items-center gap-10 lg:grid-cols-2 lg:gap-[80px]", i % 2 === 1 && "lg:[&>*:first-child]:order-2"]}>
+            <div class="flex flex-col items-start gap-6">
+              <PillLabel>{String(i + 1).padStart(2, "0")} · {s.title}</PillLabel>
+              <h2 class="font-heading text-[32px] leading-[1.2] tracking-[-0.9px] text-black md:text-[45px]">{d.headline}</h2>
+              <div class="flex flex-col gap-3 text-lg leading-[1.4] text-body md:text-xl">
+                {d.body.map((p) => <p>{p}</p>)}
+              </div>
+              {d.ideal && (
+                <div class="flex flex-col gap-3">
+                  <p class="font-heading text-lg text-black">Ideal for:</p>
+                  <ul class="flex flex-col gap-2">
+                    {d.ideal.map((item) => (
+                      <li class="flex items-center gap-2.5 text-base text-body">
+                        <HugeiconsIcon icon={Tick02Icon} size={20} className="text-black" /> {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <LinkButton href={`/contact?service=${s.slug}#quote`} variant="dark">
+                {d.cta} <HugeiconsIcon icon={ArrowRight02Icon} size={20} />
+              </LinkButton>
+            </div>
+            <ImagePlaceholder src={d.image} alt={s.title} label={`${s.title} photo`} class="aspect-[4/3] w-full" />
+          </div>
+        </section>
+      );
+    })}
+  </div>
+
+  <QuoteBanner
+    title="Not sure which solution you need? *Just ask.*"
+    sub="Tell us what you're building and we'll help you determine the right option for your project."
+    label="Request a Quote"
+    href="/contact#quote"
+  />
+  <Footer />
+</BaseLayout>
