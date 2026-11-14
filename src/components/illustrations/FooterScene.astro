@@ -1,0 +1,318 @@
+---
+/**
+ * Animated worksite for the footer.
+ * The people are the "Open Peeps" illustrations (free to use, CC0), saved in public/images/peeps/.
+ * Everything else (window, handrail, crane, roof, fence) is drawn in code.
+ * Motion switches off automatically for visitors who have "reduce motion" turned on.
+ */
+const ink = "#f2f2f2";   // line colour (white on the black footer)
+const dark = "#0b0b0b";  // dark fill
+const glass = "rgba(255,255,255,0.14)";
+const white = "#f2f2f2";
+
+// picture sizes (px) of each saved person, used to keep proportions right
+const size: Record<string, [number, number]> = {
+  bandana: [161, 260], glasses: [168, 252], woman: [168, 239], turban: [171, 252],
+  flattop: [170, 254], curly: [157, 244], bun: [166, 268], hat: [169, 248], afro: [167, 247],
+};
+/** A person standing behind the fence: centre x, scale (0.6 ≈ 150px tall). */
+const peep = (name: string, cx: number, scale = 0.6) => {
+  const [w0, h0] = size[name];
+  const w = w0 * scale, h = h0 * scale;
+  return { href: `/images/peeps/${name}.webp`, x: cx - w / 2, y: 300 - h, width: w, height: h };
+};
+
+let lattice = "";
+for (let yy = 252; yy > 40; yy -= 22) lattice += `M692 ${yy} L708 ${yy - 22} M708 ${yy} L692 ${yy - 22} M692 ${yy - 22} H708 `;
+let jib = "";
+for (let xx = 612; xx < 900; xx += 26) jib += `M${xx} 36 L${xx + 13} 22 L${xx + 26} 36 `;
+const planks = Array.from({ length: 32 }, (_, i) => i * 40 + 20);
+---
+
+<svg viewBox="0 0 1270 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="block h-auto">
+  <defs>
+    <!-- materials: brushed aluminium, glass, white paint, steel, roof sheet -->
+    <linearGradient id="fs-metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f8f8f" /><stop offset="0.3" stop-color="#4a4a4a" /><stop offset="0.55" stop-color="#7d7d7d" /><stop offset="1" stop-color="#262626" /></linearGradient>
+    <linearGradient id="fs-metal-h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#363636" /><stop offset="0.35" stop-color="#a0a0a0" /><stop offset="0.65" stop-color="#5c5c5c" /><stop offset="1" stop-color="#2b2b2b" /></linearGradient>
+    <linearGradient id="fs-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="rgba(255,255,255,0.3)" /><stop offset="0.5" stop-color="rgba(255,255,255,0.07)" /><stop offset="1" stop-color="rgba(255,255,255,0.22)" /></linearGradient>
+    <linearGradient id="fs-glass-light" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="rgba(255,255,255,0.2)" /><stop offset="0.5" stop-color="rgba(255,255,255,0.04)" /><stop offset="1" stop-color="rgba(255,255,255,0.15)" /></linearGradient>
+    <linearGradient id="fs-white" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" /><stop offset="1" stop-color="#b3b3b3" /></linearGradient>
+    <linearGradient id="fs-steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f1f1" /><stop offset="0.5" stop-color="#8d8d8d" /><stop offset="1" stop-color="#474747" /></linearGradient>
+    <linearGradient id="fs-roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#707070" /><stop offset="1" stop-color="#2d2d2d" /></linearGradient>
+    <linearGradient id="fs-fence" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1d1d" /><stop offset="1" stop-color="#0f0f0f" /></linearGradient>
+
+    <!-- a little mitten hand -->
+    <g id="fs-hand">
+      <circle cx="0" cy="0" r="8" fill="#fff" stroke="#0c0c0c" stroke-width="2.4" />
+      <path d="M-6 -3 q-4 -4 0 -7" fill="none" stroke="#0c0c0c" stroke-width="2.2" stroke-linecap="round" />
+    </g>
+    <!-- claw hammer, pointing up from the hand -->
+    <g id="fs-hammer" stroke={ink} stroke-width="2" stroke-linejoin="round">
+      <rect x="-3.4" y="-38" width="6.8" height="36" rx="3.4" fill="url(#fs-white)" />
+      <path d="M-3 -10 h6 M-3 -15 h6 M-3 -20 h6" stroke={dark} stroke-opacity="0.7" stroke-width="1.4" />
+      <path d="M-12 -52 h20 q5 0 5 5 v5 q0 3 -3 3 h-22 z" fill="url(#fs-steel)" />
+      <path d="M-12 -49 c-8 -1 -12 3 -13 9 l5 1 c1 -3 4 -5 8 -4z" fill="url(#fs-steel)" />
+      <path d="M-9 -49 h14" stroke="#fff" stroke-opacity="0.85" stroke-width="1.4" fill="none" />
+    </g>
+    <!-- vacuum suction cup used by the crane to lift glass -->
+    <g id="fs-cup" stroke={ink} stroke-width="2">
+      <ellipse cx="0" cy="3" rx="9" ry="4" fill="url(#fs-white)" />
+      <rect x="-3" y="-9" width="6" height="11" rx="2" fill="url(#fs-metal-h)" />
+      <circle cx="0" cy="-10" r="3.2" fill={dark} />
+    </g>
+    <!-- aluminium corner guard -->
+    <path id="fs-guard" d="M0 0 h9 v4 h-5 v5 h-4z" fill="url(#fs-white)" stroke={ink} stroke-width="1.6" stroke-linejoin="round" />
+
+    <clipPath id="fs-win-clip"><rect x="143" y="158" width="84" height="96" /></clipPath>
+    <clipPath id="fs-cab-clip"><rect x="642" y="54" width="40" height="36" /></clipPath>
+    <pattern id="fs-hazard" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="11" height="22" fill={dark} /><rect x="11" width="11" height="22" fill="#e9e9e9" />
+    </pattern>
+  </defs>
+
+  <!-- ===== BEHIND THE FENCE: structures ===== -->
+  <!-- ALUMINIUM WINDOW: mitred frame, double glazing, sliding sash with handle, sill -->
+  <g stroke={ink} stroke-linejoin="round">
+    <path fill-rule="evenodd" d="M133 148h104v156h-104z M143 158h84v96h-84z" fill="url(#fs-metal)" stroke-width="3" />
+    <!-- mitred corners -->
+    <path d="M133 148 L143 158 M237 148 L227 158 M133 304 L143 254 M237 304 L227 254" stroke-width="1.4" stroke-opacity="0.55" fill="none" />
+    <!-- fixed pane (left) -->
+    <rect x="143" y="158" width="84" height="96" fill="url(#fs-glass)" stroke-width="2" />
+    <rect x="147" y="162" width="36" height="88" fill="none" stroke="#fff" stroke-opacity="0.8" stroke-width="1.4" />
+    <!-- sliding sash (right) -->
+    <g class="fs-sash">
+      <path fill-rule="evenodd" d="M183 158h46v96h-46z M188 163h36v86h-36z" fill="url(#fs-metal)" stroke-width="2.6" />
+      <rect x="188" y="163" width="36" height="86" fill="url(#fs-glass)" stroke-width="1.6" />
+      <rect x="188" y="163" width="36" height="86" fill="none" stroke="#fff" stroke-opacity="0.85" stroke-width="1.2" transform="translate(2 2) scale(0.94 0.94)" />
+      <!-- handle + lock plate -->
+      <rect x="185" y="196" width="6" height="26" rx="3" fill="url(#fs-white)" stroke-width="1.8" />
+      <circle cx="188" cy="226" r="1.8" fill="#fff" stroke-width="1" />
+    </g>
+    <!-- glass reflections that sweep across -->
+    <g clip-path="url(#fs-win-clip)" stroke="none">
+      <path d="M150 158 h16 l-40 96 h-16z" fill="rgba(255,255,255,0.45)" />
+      <path d="M176 158 h6 l-40 96 h-6z" fill="rgba(255,255,255,0.3)" />
+      <g class="fs-sheen"><path d="M156 158 h14 l-34 96 h-14z" fill="rgba(255,255,255,0.7)" /></g>
+    </g>
+    <!-- screws and weep-hole slots -->
+    <g fill="#fff" stroke-width="1"><circle cx="138" cy="153" r="1.6" /><circle cx="232" cy="153" r="1.6" /><circle cx="138" cy="238" r="1.6" /><circle cx="232" cy="238" r="1.6" /></g>
+    <!-- safety sticker -->
+    <g transform="translate(152 236)"><rect width="16" height="12" rx="2" fill="url(#fs-white)" stroke-width="1.4" /><path d="M5 3 l6 6 M11 3 l-6 6" stroke={dark} stroke-width="1.6" /></g>
+    <!-- window sill with drip edge -->
+    <rect x="127" y="244" width="116" height="9" rx="2" fill="url(#fs-metal)" stroke-width="2.4" />
+    <path d="M133 249 h14 M155 249 h14" stroke-width="1.2" stroke-opacity="0.5" />
+  </g>
+
+  <!-- CRANE: lattice tower, jib, counterweights, cab, blinking light -->
+  <g stroke={ink} stroke-linejoin="round" stroke-linecap="round">
+    <g>
+      <path d={lattice} fill="none" stroke-width="2.2" />
+      <rect x="690" y="36" width="5" height="264" fill="url(#fs-metal-h)" stroke-width="2.4" />
+      <rect x="705" y="36" width="5" height="264" fill="url(#fs-metal-h)" stroke-width="2.4" />
+      <!-- jib -->
+      <rect x="606" y="33" width="296" height="6" rx="2" fill="url(#fs-metal)" stroke-width="2.6" />
+      <rect x="606" y="20" width="296" height="4" rx="2" fill="url(#fs-metal)" stroke-width="2.2" />
+      <path d={jib} fill="none" stroke-width="1.8" />
+      <path d="M650 20 L700 5 L760 20" fill="none" stroke-width="2" />
+      <!-- stacked counterweights -->
+      <g stroke-width="2.4"><rect x="606" y="40" width="30" height="9" rx="2" fill="url(#fs-steel)" /><rect x="606" y="50" width="30" height="9" rx="2" fill="url(#fs-steel)" /><rect x="610" y="60" width="22" height="8" rx="2" fill="url(#fs-steel)" /></g>
+      <!-- trolley and hook block -->
+      <rect x="848" y="26" width="24" height="12" rx="3" fill="url(#fs-white)" stroke-width="2.2" />
+      <circle cx="853" cy="40" r="2.6" fill="#fff" stroke-width="1.4" /><circle cx="867" cy="40" r="2.6" fill="#fff" stroke-width="1.4" />
+    </g>
+    <g transform="translate(700 5)"><path class="fs-flag" d="M0 0 V-18 L20 -12 L0 -6" fill="url(#fs-white)" stroke-width="2" /></g>
+    <circle class="fs-cone-light" cx="700" cy="3" r="3" fill="#ececec" stroke-width="1.4" />
+    <!-- operator cab with a worker inside -->
+    <rect x="636" y="42" width="54" height="56" rx="6" fill="url(#fs-metal)" stroke-width="3" />
+    <rect x="642" y="54" width="40" height="36" rx="2" fill="rgba(255,255,255,0.1)" stroke-width="2.4" />
+    <g clip-path="url(#fs-cab-clip)">
+      <image class="fs-peep" href="/images/peeps/hat.webp" x="650" y="58" width="24" height="35" />
+      <path d="M646 88 L664 56 M656 88 L670 62" stroke="#fff" stroke-opacity="0.65" stroke-width="3" />
+    </g>
+    <rect x="644" y="44" width="38" height="6" rx="2" fill="url(#fs-white)" stroke-width="1.8" />
+    <path d="M640 94 h46" stroke-width="1.4" stroke-opacity="0.5" />
+  </g>
+
+  <!-- GLASS PANEL on the hook: spreader bar, suction cups, aluminium frame -->
+  <g class="fs-pendulum">
+    <line class="fs-rope" x1="860" y1="38" x2="860" y2="140" stroke={ink} stroke-width="2.4" />
+    <g class="fs-hang" stroke={ink} stroke-linejoin="round" stroke-linecap="round">
+      <rect x="854" y="136" width="12" height="9" rx="2" fill="url(#fs-white)" stroke-width="2" />
+      <path d="M860 145 L842 166 M860 145 L878 166" fill="none" stroke-width="1.8" />
+      <rect x="834" y="165" width="52" height="7" rx="2.5" fill="url(#fs-metal)" stroke-width="2.2" />
+      <use href="#fs-cup" x="846" y="176" /><use href="#fs-cup" x="874" y="176" />
+      <g>
+        <path fill-rule="evenodd" d="M826 190h68v54h-68z M832 196h56v42h-56z" fill="url(#fs-metal)" stroke-width="2.8" />
+        <rect x="832" y="196" width="56" height="42" fill="url(#fs-glass)" stroke-width="1.6" />
+        <path d="M838 238 L866 196 h12 l-28 42z" fill="rgba(255,255,255,0.5)" stroke="none" />
+        <path d="M868 238 L880 220 v18z" fill="rgba(255,255,255,0.4)" stroke="none" />
+        <use href="#fs-guard" x="826" y="190" /><use href="#fs-guard" x="894" y="190" transform="translate(1788 0) scale(-1 1)" />
+        <rect x="838" y="224" width="14" height="9" rx="1.5" fill="url(#fs-white)" stroke-width="1.2" />
+      </g>
+    </g>
+  </g>
+
+  <!-- ROOF: truss, corrugated metal sheets with screws, ridge cap, sliding sheet -->
+  <g stroke={ink} stroke-linejoin="round" stroke-linecap="round">
+    <rect x="892" y="190" width="9" height="62" fill="url(#fs-metal-h)" stroke-width="2.4" />
+    <rect x="1099" y="190" width="9" height="62" fill="url(#fs-metal-h)" stroke-width="2.4" />
+    <path d="M886 194 L1000 104 L1114 194" fill="none" stroke-width="4" />
+    <path d="M900 194 L1000 118 L1100 194" fill="none" stroke-width="2.6" />
+    <path d="M886 194 L1000 104 L1114 194" fill="none" stroke="#fff" stroke-opacity="0.6" stroke-width="1.2" />
+    <line x1="1000" y1="118" x2="1000" y2="194" stroke-width="3.2" />
+    <line x1="900" y1="194" x2="1100" y2="194" stroke-width="3" />
+    <path d="M950 156 L1000 194 M1050 156 L1000 194 M950 156 L950 194 M1050 156 L1050 194" fill="none" stroke-width="2" />
+    <!-- steel brackets at the joints -->
+    <g fill="url(#fs-steel)" stroke-width="1.6"><rect x="995" y="188" width="10" height="12" rx="1.5" /><rect x="945" y="188" width="10" height="12" rx="1.5" /><rect x="1045" y="188" width="10" height="12" rx="1.5" /></g>
+    <!-- corrugated sheet on the right slope -->
+    <path d="M1002 104 L1114 194 L1114 204 L1002 114Z" fill="url(#fs-roof)" stroke-width="2.4" />
+    <g stroke-width="1.5" stroke-opacity="0.65">
+      <path d="M1018 110 L1018 120 M1032 121 L1032 131 M1046 132 L1046 142 M1060 143 L1060 153 M1074 155 L1074 165 M1088 166 L1088 176 M1102 177 L1102 187" />
+    </g>
+    <g fill="#fff" stroke-width="1"><circle cx="1011" cy="116" r="1.6" /><circle cx="1039" cy="138" r="1.6" /><circle cx="1067" cy="161" r="1.6" /><circle cx="1095" cy="183" r="1.6" /></g>
+    <!-- ridge cap and gutter -->
+    <path d="M992 106 L1000 98 L1012 106 L1003 112z" fill="url(#fs-white)" stroke-width="2" />
+    <path d="M1108 198 q10 0 12 10" fill="none" stroke-width="3" />
+    <!-- new sheet being slid into place -->
+    <g class="fs-sheet">
+      <path d="M1018 146 L1066 188 L1066 198 L1018 156Z" fill="url(#fs-white)" stroke-width="2.4" />
+      <path d="M1034 150 v10 M1046 160 v10 M1058 171 v10" stroke="#fff" stroke-opacity="0.6" stroke-width="1.4" />
+    </g>
+  </g>
+
+  <!-- ===== ARMS (drawn behind each person so they look attached) ===== -->
+  <!-- hammer arm: person at left of window -->
+  <g class="fs-halo" transform="translate(97 240)">
+    <g class="fs-swing">
+      <rect x="-7" y="-50" width="14" height="50" rx="7" fill="#fff" stroke="#0c0c0c" stroke-width="2.4" />
+      <rect x="-7.5" y="-48" width="15" height="6" rx="2" fill="#0c0c0c" stroke="#0c0c0c" stroke-width="1.6" />
+      <g transform="translate(0 -56)"><use href="#fs-hammer" /><use href="#fs-hand" /></g>
+    </g>
+  </g>
+  <!-- aluminium spirit level: person at right of window -->
+  <g transform="translate(266 232)">
+    <g class="fs-level">
+      <g stroke={ink} stroke-width="2.2" stroke-linejoin="round">
+        <rect x="-82" y="-6" width="86" height="12" rx="2.5" fill="url(#fs-white)" />
+        <rect x="-82" y="-6" width="86" height="4" rx="2" fill="#fff" fill-opacity="0.35" stroke="none" />
+        <rect x="-50" y="-4" width="18" height="8" rx="4" fill="url(#fs-glass)" stroke-width="1.4" />
+        <circle cx="-41" cy="0" r="2" fill={dark} stroke-width="0.8" />
+        <rect x="-76" y="-3" width="6" height="6" rx="3" fill="url(#fs-glass)" stroke-width="1.2" />
+        <rect x="-16" y="-3" width="6" height="6" rx="3" fill="url(#fs-glass)" stroke-width="1.2" />
+        <rect x="-86" y="-5" width="5" height="10" rx="2" fill={ink} />
+      </g>
+      <path d="M-30 6 v3 M-24 6 v3 M-18 6 v3 M-66 6 v3 M-60 6 v3 M-54 6 v3" stroke={ink} stroke-width="1" />
+      <use href="#fs-hand" />
+    </g>
+  </g>
+  <!-- waving ground guide, either side of the crane worker -->
+  <g class="fs-halo" transform="translate(742 244)"><g class="fs-wave"><rect x="-7" y="-46" width="14" height="46" rx="7" fill="#fff" stroke="#0c0c0c" stroke-width="2.4" /><rect x="-7.5" y="-44" width="15" height="6" rx="2" fill="#0c0c0c" stroke="#0c0c0c" stroke-width="1.6" /><g transform="translate(0 -52)"><use href="#fs-hand" /></g></g></g>
+  <g class="fs-halo" transform="translate(818 244)"><g class="fs-wave" style="animation-direction:alternate-reverse"><rect x="-7" y="-46" width="14" height="46" rx="7" fill="#fff" stroke="#0c0c0c" stroke-width="2.4" /><rect x="-7.5" y="-44" width="15" height="6" rx="2" fill="#0c0c0c" stroke="#0c0c0c" stroke-width="1.6" /><g transform="translate(0 -52)"><use href="#fs-hand" /></g></g></g>
+  <!-- roofers: two hammers meeting at the centre post -->
+  <g class="fs-halo" transform="translate(955 240)">
+    <g class="fs-swing" style="animation-delay:-0.2s">
+      <rect x="-7" y="-50" width="14" height="50" rx="7" fill="#fff" stroke="#0c0c0c" stroke-width="2.4" />
+      <rect x="-7.5" y="-48" width="15" height="6" rx="2" fill="#0c0c0c" stroke="#0c0c0c" stroke-width="1.6" />
+      <g transform="translate(0 -56)"><use href="#fs-hammer" /><use href="#fs-hand" /></g>
+    </g>
+  </g>
+  <g class="fs-halo" transform="translate(1053 240) scale(-1 1)">
+    <g class="fs-swing" style="animation-delay:-1s">
+      <rect x="-7" y="-50" width="14" height="50" rx="7" fill="#fff" stroke="#0c0c0c" stroke-width="2.4" />
+      <rect x="-7.5" y="-48" width="15" height="6" rx="2" fill="#0c0c0c" stroke="#0c0c0c" stroke-width="1.6" />
+      <g transform="translate(0 -56)"><use href="#fs-hammer" /><use href="#fs-hand" /></g>
+    </g>
+  </g>
+
+  <!-- ===== THE PEOPLE (Open Peeps) ===== -->
+  <image class="fs-peep" {...peep("bandana", 70)} style="animation-delay:-0.4s" />
+  <image class="fs-peep" {...peep("glasses", 304)} style="animation-delay:-1.4s" />
+  <image class="fs-peep" {...peep("woman", 486)} style="animation-delay:-0.9s" />
+  <image class="fs-peep" {...peep("afro", 628)} style="animation-delay:-2s" />
+  <image class="fs-peep" {...peep("turban", 780)} style="animation-delay:-1.1s" />
+  <image class="fs-peep" {...peep("flattop", 937)} style="animation-delay:-0.6s" />
+  <image class="fs-peep" {...peep("curly", 1071)} style="animation-delay:-1.8s" />
+
+  <!-- walker holding a big framed glass pane -->
+  <g class="fs-carry">
+    <image class="fs-peep-static" {...peep("bun", 1208)} />
+    <g stroke={ink} stroke-linejoin="round">
+      <path fill-rule="evenodd" d="M1164 166h88v124h-88z M1171 173h74v110h-74z" fill="url(#fs-metal)" stroke-width="3" />
+      <rect x="1171" y="173" width="74" height="110" fill="url(#fs-glass-light)" stroke-width="1.8" />
+      <path d="M1180 283 L1222 173 h14 l-42 110z" fill="rgba(255,255,255,0.5)" stroke="none" />
+      <path d="M1218 283 L1245 213 v70z" fill="rgba(255,255,255,0.32)" stroke="none" />
+      <use href="#fs-guard" x="1164" y="166" /><use href="#fs-guard" x="1252" y="166" transform="translate(2504 0) scale(-1 1)" />
+      <g transform="translate(1176 262)"><rect width="18" height="12" rx="2" fill="url(#fs-white)" stroke-width="1.4" /><path d="M6 3 l6 6 M12 3 l-6 6" stroke={dark} stroke-width="1.6" /></g>
+    </g>
+    <use href="#fs-hand" x="1164" y="232" /><use href="#fs-hand" x="1252" y="232" />
+  </g>
+
+  <!-- ===== IN FRONT: handrail with glass panels, sparks, fence ===== -->
+  <!-- stainless handrail: tube rail, posts with base plates, glass balustrade clamped between posts -->
+  <g stroke={ink} stroke-linejoin="round">
+    <rect x="404" y="222" width="74" height="26" rx="2" fill="url(#fs-glass-light)" stroke-width="2" />
+    <rect x="494" y="222" width="74" height="26" rx="2" fill="url(#fs-glass-light)" stroke-width="2" />
+    <path d="M414 248 L434 222 h10 l-20 26z M504 248 L524 222 h10 l-20 26z" fill="rgba(255,255,255,0.5)" stroke="none" />
+    <g fill="url(#fs-metal-h)" stroke-width="1.6">
+      <circle cx="410" cy="227" r="3.4" /><circle cx="410" cy="242" r="3.4" /><circle cx="472" cy="227" r="3.4" /><circle cx="472" cy="242" r="3.4" />
+      <circle cx="500" cy="227" r="3.4" /><circle cx="500" cy="242" r="3.4" /><circle cx="562" cy="227" r="3.4" /><circle cx="562" cy="242" r="3.4" />
+    </g>
+    {[396, 486, 576].map((px) => (
+      <g>
+        <rect x={px - 4.5} y="204" width="9" height="44" rx="3" fill="url(#fs-metal-h)" stroke-width="2.2" />
+        <rect x={px - 9} y="246" width="18" height="6" rx="2" fill="url(#fs-metal)" stroke-width="2" />
+        <circle cx={px - 5.5} cy="249" r="1.2" fill={ink} stroke="none" /><circle cx={px + 5.5} cy="249" r="1.2" fill={ink} stroke="none" />
+      </g>
+    ))}
+    <rect x="384" y="199" width="210" height="11" rx="5.5" fill="url(#fs-metal)" stroke-width="2.6" />
+    <path d="M392 202.5 h194" stroke="#fff" stroke-width="1.8" stroke-linecap="round" />
+    <circle cx="386" cy="204.5" r="5.5" fill="url(#fs-metal)" stroke-width="2.4" /><circle cx="592" cy="204.5" r="5.5" fill="url(#fs-metal)" stroke-width="2.4" />
+  </g>
+  <g class="fs-polish">
+    <rect x="552" y="188" width="24" height="10" rx="3.5" fill="url(#fs-white)" stroke={ink} stroke-width="2.2" />
+    <g transform="translate(564 183)"><use href="#fs-hand" /></g>
+  </g>
+  <g fill="#fff">
+    <path class="fs-star" d="M430 190 L432 195 L437 197 L432 199 L430 204 L428 199 L423 197 L428 195Z" />
+    <path class="fs-star" style="animation-delay:-0.8s" d="M520 186 L522 191 L527 193 L522 195 L520 200 L518 195 L513 193 L518 191Z" />
+    <path class="fs-star" style="animation-delay:-1.6s" d="M470 184 L471.5 188 L475.5 189.5 L471.5 191 L470 195 L468.5 191 L464.5 189.5 L468.5 188Z" />
+  </g>
+  <!-- impact sparks where the hammers land -->
+  <g fill="#ffffff" stroke={ink} stroke-width="1.2">
+    <path class="fs-spark" style="animation-delay:-0.2s" d="M142 214 l4 -9 l3 8 l9 -3 l-6 7 l7 5 l-9 0 l-2 8 l-4 -8 l-9 3 l6 -7z" />
+    <path class="fs-spark" style="animation-delay:-0.3s" d="M994 196 l3 -7 l3 6 l7 -2 l-4 5 l5 4 l-7 0 l-2 6 l-3 -6 l-7 2 l4 -5z" />
+  </g>
+
+  <!-- fence -->
+  <g stroke={ink} stroke-width="2.6" stroke-linejoin="round">
+    <rect x="-4" y="252" width="1278" height="52" fill="url(#fs-fence)" />
+    {planks.map((p) => <line x1={p} x2={p} y1="252" y2="300" stroke-width="1.6" />)}
+    <rect x="-4" y="252" width="1278" height="7" fill="url(#fs-metal)" />
+    <rect x="-4" y="266" width="1278" height="9" fill="url(#fs-white)" stroke-width="2" />
+    {[0, 160, 320, 480, 560, 840, 960, 1120, 1268].map((p) => <rect x={p - 5} y="248" width="10" height="52" fill="url(#fs-metal-h)" />)}
+    <rect x="590" y="275" width="210" height="22" rx="4" fill={dark} stroke-width="2.2" />
+    <rect x="8" y="278" width="70" height="16" fill="url(#fs-hazard)" stroke-width="2" />
+    <rect x="1192" y="278" width="70" height="16" fill="url(#fs-hazard)" stroke-width="2" />
+  </g>
+  <text x="695" y="291" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1.6" fill={ink} style="font-family: var(--font-clash-grotesk), system-ui, sans-serif">DIVINTECH ALUMINIUM</text>
+
+  <!-- aluminium extrusions bundle (with hollow-section ends), toolbox and traffic cones -->
+  <g stroke={ink} stroke-width="2" stroke-linejoin="round">
+    {[0, 1, 2].map((r) => (
+      <g>
+        <rect x={546 + (r % 2) * 3} y={224 + r * 9} width="72" height="8" rx="2" fill="url(#fs-metal)" />
+        <rect x={546 + (r % 2) * 3} y={224 + r * 9} width="9" height="8" rx="1.5" fill="#fff" />
+        <path d={`M${549 + (r % 2) * 3} ${227 + r * 9} h3 v2 h-3z`} fill={dark} stroke="none" />
+        <path d={`M${558 + (r % 2) * 3} ${225 + r * 9} h56`} stroke="#fff" stroke-width="1.3" stroke-opacity="0.9" />
+      </g>
+    ))}
+    <rect x="564" y="221" width="6" height="32" rx="1.5" fill="url(#fs-white)" /><rect x="596" y="221" width="6" height="32" rx="1.5" fill="url(#fs-white)" />
+    <rect x="577" y="212" width="16" height="9" rx="1.5" fill="#fff" stroke-width="1.4" /><path d="M580 216.5 h10" stroke-width="1.2" />
+    <rect x="336" y="236" width="40" height="18" rx="3" fill="url(#fs-white)" />
+    <path d="M345 236 v-6 h22 v6" fill="none" stroke-width="2.4" /><rect x="352" y="243" width="8" height="5" rx="1" fill="url(#fs-metal)" stroke-width="1.2" /><path d="M338 240 h36" stroke="#fff" stroke-opacity="0.55" stroke-width="1.6" />
+    <path d="M12 300 L24 262 L36 300Z" fill="#ececec" /><rect x="8" y="298" width="32" height="6" rx="2" fill={ink} />
+    <path d="M17 282 h14 M14 291 h20" stroke={dark} stroke-width="3.2" />
+    <path d="M1236 300 L1248 262 L1260 300Z" fill="#ececec" /><rect x="1232" y="298" width="32" height="6" rx="2" fill={ink} />
+    <path d="M1241 282 h14 M1238 291 h20" stroke={dark} stroke-width="3.2" />
+  </g>
+</svg>

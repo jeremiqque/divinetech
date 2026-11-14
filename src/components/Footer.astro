@@ -1,0 +1,74 @@
+---
+import { HugeiconsIcon } from "@hugeicons/react";
+import { TiktokIcon } from "@hugeicons/core-free-icons";
+import { footer, site, whatsappLink } from "@/config/site";
+import FooterScene from "./illustrations/FooterScene.astro";
+
+const resolve = (href: string) =>
+  href === "whatsapp" ? whatsappLink() : href === "tel" ? `tel:${site.contact.phone.replace(/\s+/g, "")}` : href;
+
+const socials = [
+  { label: "TikTok", href: site.social.tiktok, icon: TiktokIcon },
+].filter((s) => s.href);
+---
+
+<footer class="mx-auto w-full max-w-[1728px]">
+  <!-- Black footer with a white line-art worksite along the bottom -->
+  <div class="relative isolate overflow-hidden rounded-t-[32px] border-t border-white/10 bg-[#0e0a08] px-5 pt-14 pb-[env(safe-area-inset-bottom)] md:rounded-t-[64px] md:px-10 md:pt-20">
+    <!-- faint dashed circles behind the scene -->
+    <svg aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 -z-10 mx-auto h-[420px] w-[1400px] max-w-none opacity-100" viewBox="0 0 1400 420" fill="none">
+      <g stroke="#ffffff" stroke-opacity="0.12" stroke-dasharray="7 9" stroke-width="1.2">
+        <circle cx="400" cy="560" r="400" /><circle cx="700" cy="580" r="450" /><circle cx="1000" cy="560" r="400" />
+      </g>
+    </svg>
+
+    <div class="relative z-10 mx-auto flex max-w-[1270px] flex-col gap-14 md:gap-20">
+      <div class="flex flex-col justify-between gap-12 lg:flex-row">
+        <div class="flex flex-col gap-8">
+          <div class="flex flex-col gap-4">
+            <a href="/" class="flex items-center gap-5" aria-label={`${site.name} home`}>
+              <img src={site.logo.src} alt="" width="67" height="56" class="h-14 w-[67px] rounded-[11px] bg-white" />
+              <span class="font-heading text-[36px] font-bold leading-none text-white">{site.shortName}</span>
+            </a>
+            <p class="max-w-[353px] text-base leading-6 font-normal text-white/55">{footer.blurb}</p>
+          </div>
+          {socials.length > 0 && (
+            <div class="-ml-3 flex items-center gap-2">
+              {socials.map((s) => (
+                <a href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer" class="grid size-11 place-items-center text-white/70 transition-colors hover:text-accent">
+                  <HugeiconsIcon icon={s.icon} size={24} />
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div class="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:gap-x-[92px]">
+          {footer.columns.map((col) => (
+            <div class="flex min-w-[128px] flex-col gap-0.5">
+              <p class="font-heading text-base leading-6 font-semibold text-white">{col.title}</p>
+              <ul class="flex flex-col">
+                {col.links.map((l) => (
+                  <li>
+                    <a href={resolve(l.href)} class="block py-3 text-sm leading-normal font-normal text-white/60 transition-colors hover:text-accent lg:py-1.5">
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <p class="text-sm leading-6 font-normal text-white/45">{footer.copyright}</p>
+    </div>
+
+    <!-- Animated worksite (people: Open Peeps, CC0). Shown in white line art on black. -->
+    <div class="relative z-10 mx-auto mt-10 max-w-[1270px] overflow-hidden md:mt-12">
+      <div class="relative left-1/2 w-[860px] max-w-none -translate-x-1/2 md:left-0 md:w-full md:translate-x-0">
+        <FooterScene />
+      </div>
+    </div>
+  </div>
+</footer>
