@@ -193,9 +193,9 @@
 
 /* ---------- Testimonial wall (cards drifting up and down) ---------- */
 /* ---------- Motion: scroll reveal, image fade, menu, page change ---------- */
-html.js-reveal .reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); transition-delay: var(--rd, 0ms); }
+html.js-reveal .reveal { opacity: 0; transform: translateY(26px); transition: opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1); transition-delay: var(--rd, 0ms); }
 html.js-reveal .reveal.in { opacity: 1; transform: none; }
-html.js .fade-img { opacity: 0; transition: opacity .8s ease; }
+html.js .fade-img { opacity: 0; transition: opacity .4s ease; }
 html.js .fade-img.is-loaded { opacity: 1; }
 .menu-in { animation: menu-in .2s cubic-bezier(.22,1,.36,1); transform-origin: top; }
 @keyframes menu-in { from { opacity: 0; transform: translateY(-8px) scale(.98); } to { opacity: 1; transform: none; } }
