@@ -1,12 +1,12 @@
 ---
 /** A picture slot. Shows the image if one is set, otherwise a grey box (as in the Figma design). */
-interface Props { src?: string; alt?: string; label?: string; class?: string; dark?: boolean }
-const { src = "", alt = "", label, class: className = "", dark = false } = Astro.props;
+interface Props { src?: string; alt?: string; label?: string; class?: string; dark?: boolean; priority?: boolean }
+const { src = "", alt = "", label, class: className = "", dark = false, priority = false } = Astro.props;
 ---
 
 <div class:list={["relative overflow-hidden rounded-card", dark ? "bg-ink" : "bg-black/25", className]}>
   {src ? (
-    <img src={src} alt={alt} class="fade-img absolute inset-0 size-full object-cover" loading="lazy" decoding="async" onload="this.classList.add('is-loaded')" />
+    <img src={src} alt={alt} class="fade-img absolute inset-0 size-full object-cover" loading={priority ? "eager" : "lazy"} fetchpriority={priority ? "high" : "auto"} decoding="async" onload="this.classList.add('is-loaded')" />
   ) : (
     label && (
       <span class:list={["absolute inset-0 flex items-center justify-center text-sm", dark ? "text-white/30" : "text-black/40"]}>{label}</span>
