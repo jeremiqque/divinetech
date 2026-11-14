@@ -1,0 +1,13 @@
+---
+/** Label pill + big heading + optional sub text, centered. Used for every section. */
+import PillLabel from "./PillLabel.astro";
+interface Props { label?: string; title: string; sub?: string; class?: string; withArrow?: boolean }
+const { label, title, sub, class: className = "", withArrow = false } = Astro.props;
+import { accent } from "@/lib/accent";
+---
+
+<div class:list={["mx-auto flex max-w-[1037px] flex-col items-center gap-1.5 text-center", className]}>
+  {label && <PillLabel withArrow={withArrow}>{label}</PillLabel>}
+  <h2 class="section-title max-sm:!text-[32px]" set:html={accent(title)}></h2>
+  {sub && <p class="section-sub max-sm:!text-lg">{sub}</p>}
+</div>

@@ -1,0 +1,12 @@
+---
+/** The small rounded label that sits above section headings (e.g. "Services"). */
+interface Props { class?: string; withArrow?: boolean }
+const { class: className = "", withArrow = false } = Astro.props;
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
+---
+
+<span class:list={["pill-label", className]}>
+  <slot />
+  {withArrow && <HugeiconsIcon icon={ArrowRight02Icon} size={16} strokeWidth={1.8} />}
+</span>
