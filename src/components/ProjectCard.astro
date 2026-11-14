@@ -1,0 +1,17 @@
+---
+import ImagePlaceholder from "./ImagePlaceholder.astro";
+interface Props { title: string; service: string; location?: string; href: string; image?: string }
+const { title, service, location, href, image = "" } = Astro.props;
+---
+
+<a href={href} class="group block">
+  <ImagePlaceholder src={image} alt={title} dark label="Project photo" class="aspect-[709/437] w-full [&_img]:transition-transform [&_img]:duration-700 group-hover:[&_img]:scale-[1.04]">
+    <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-5 pt-14 text-white md:p-6">
+      <div>
+        <p class="font-heading text-xl leading-tight [text-shadow:0_1px_8px_rgba(0,0,0,.45)]">{title}</p>
+        <p class="mt-1 text-sm text-white/80">{service}{location ? ` · ${location}` : ""}</p>
+      </div>
+      <span class="shrink-0 text-sm opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">View project <span class="text-[#e2b48f]">→</span></span>
+    </div>
+  </ImagePlaceholder>
+</a>

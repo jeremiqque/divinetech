@@ -1,0 +1,61 @@
+---
+/**
+ * Dark service card, two looks from the design:
+ *  - "detail": Services page card (title, description, "Learn more")
+ *  - "tile":   Home page card (picture on top, numbered divider, centered text)
+ */
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
+
+interface Props {
+  title: string;
+  description: string;
+  href?: string;
+  variant?: "detail" | "tile";
+  number?: number;
+  image?: string;
+  class?: string;
+}
+const { title, description, href = "#", variant = "detail", number, image, class: className = "" } = Astro.props;
+const label = number !== undefined ? String(number).padStart(2, "0") : undefined;
+---
+
+{variant === "detail" ? (
+  <a
+    href={href}
+    class:list={["group flex min-h-[331px] flex-col justify-center rounded-card bg-ink p-8 text-white transition-transform duration-300 hover:-translate-y-1 md:px-[38px]", className]}
+  >
+    <div class="flex max-w-[418px] flex-col gap-10">
+      <div class="flex flex-col gap-5 leading-normal">
+        <h3 class="font-heading text-2xl">{title}</h3>
+        <p class="text-base">{description}</p>
+      </div>
+      <span class="flex items-center gap-2 font-heading text-lg">
+        Learn more
+        <span class="grid size-8 place-items-center rounded-full bg-accent text-white"><HugeiconsIcon icon={ArrowRight02Icon} size={18} className="transition-transform duration-300 group-hover:translate-x-0.5" /></span>
+      </span>
+    </div>
+  </a>
+) : (
+  <a
+    href={href}
+    class:list={["group relative flex aspect-[352/463] max-sm:aspect-[4/3] flex-col justify-end overflow-hidden rounded-card bg-ink text-white", className]}
+  >
+    {image ? (
+      <img src={image} alt="" class="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+    ) : (
+      <div aria-hidden="true" class="absolute inset-0 bg-ink"></div>
+    )}
+    <div class="relative flex flex-col items-center gap-[5px] px-[15px] pb-[35px] pt-12 text-center bg-gradient-to-t from-ink via-ink/90 to-transparent">
+      {label && (
+        <div class="mb-4 flex w-full items-center">
+          <span class="h-px flex-1 bg-gradient-to-r from-transparent to-accent/50"></span>
+          <span class="rounded-full border border-accent/40 bg-[#14100d]/80 px-3 py-[3px] font-heading text-[15px] leading-normal text-[#e2b48f] backdrop-blur">{label}</span>
+          <span class="h-px flex-1 bg-gradient-to-l from-transparent to-accent/50"></span>
+        </div>
+      )}
+      <h3 class="font-heading text-xl leading-normal">{title}</h3>
+      <p class="text-sm leading-normal text-card-text max-sm:text-[#cdbfb8]">{description}</p>
+    </div>
+  </a>
+)}

@@ -1,0 +1,36 @@
+---
+/** Big "Planning a new project?" call-to-action with the dark button. */
+import { accent } from "@/lib/accent";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { WhatsappIcon, Call02Icon } from "@hugeicons/core-free-icons";
+import { quoteCta, site, whatsappLink } from "@/config/site";
+import LinkButton from "./LinkButton.astro";
+interface Props { title?: string; sub?: string; label?: string; href?: string }
+const {
+  title = "Ready to start your project? *Let's talk.*",
+  sub = "Message us on WhatsApp or call, tell us what you need, and we'll guide you to the right solution.",
+  label = quoteCta.label,
+  href = quoteCta.href,
+} = Astro.props;
+---
+
+<section class="px-5 py-16 md:py-24">
+  <div class="mx-auto flex max-w-[1429px] flex-col items-center gap-11 text-center">
+    <div class="flex flex-col items-center gap-[15px]">
+      <h2 class="cta-title max-md:!text-[36px] max-md:!tracking-[-0.7px]" set:html={accent(title)}></h2>
+      <p class="text-lg tracking-[-0.4px] text-black md:text-xl">{sub}</p>
+    </div>
+    <div class="flex flex-col items-center gap-6">
+      <LinkButton href={href} variant="dark">{label}</LinkButton>
+      <div class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-8">
+        <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center justify-center gap-2 font-heading text-lg text-black hover:opacity-70">
+          <HugeiconsIcon icon={WhatsappIcon} size={22} className="text-accent" /> Chat on WhatsApp
+        </a>
+        <a href={`tel:${site.contact.phone.replace(/\s+/g, "")}`} class="inline-flex min-h-11 items-center justify-center gap-2 font-heading text-lg text-black hover:opacity-70">
+          <HugeiconsIcon icon={Call02Icon} size={22} className="text-accent" /> Call {site.contact.phoneLocal}
+        </a>
+      </div>
+      <slot />
+    </div>
+  </div>
+</section>

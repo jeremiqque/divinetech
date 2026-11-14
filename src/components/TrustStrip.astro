@@ -1,0 +1,25 @@
+---
+/** Short reassurance row under the hero. Only claims we can stand behind from the brief. */
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Layers01Icon, RulerIcon, Shield01Icon, FileAttachmentIcon } from "@hugeicons/core-free-icons";
+const items = [
+  { icon: Layers01Icon, title: "One partner", text: "Windows, doors, glass and roofing" },
+  { icon: RulerIcon, title: "Measured to fit", text: "Solutions tailored to your space" },
+  { icon: Shield01Icon, title: "Built to last", text: "Quality materials, careful installation" },
+  { icon: FileAttachmentIcon, title: "Clear quotation", text: "Recommended after we assess your project" },
+];
+---
+
+<div class="site-container">
+  <ul class="grid grid-cols-2 gap-px overflow-hidden rounded-card bg-black/[0.07] md:grid-cols-4">
+    {items.map((i) => (
+      <li class="flex flex-col gap-2 bg-white p-4 md:flex-row md:items-center md:gap-3.5 md:p-5">
+        <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent"><HugeiconsIcon icon={i.icon} size={20} /></span>
+        <span class="flex flex-col">
+          <span class="font-heading text-base leading-tight text-black">{i.title}</span>
+          <span class="text-[13px] leading-snug text-body">{i.text}</span>
+        </span>
+      </li>
+    ))}
+  </ul>
+</div>

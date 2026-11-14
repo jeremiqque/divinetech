@@ -1,0 +1,59 @@
+---
+import { accent } from "@/lib/accent";
+/**
+ * Testimonials as three columns of cards that drift up and down forever
+ * (the same idea as the "Loved by developers" wall on reactbits.dev).
+ * Edit the quotes in src/config/site.ts → testimonials.
+ */
+import { testimonials, testimonialsHeading } from "@/config/site";
+import PillLabel from "./PillLabel.astro";
+
+const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").slice(0, 2);
+
+// split the quotes into 3 columns: 1st, 4th, 7th... / 2nd, 5th, 8th... / 3rd, 6th, 9th...
+const columns = [0, 1, 2].map((c) => testimonials.filter((_, i) => i % 3 === c));
+const directions = ["up", "down", "up"] as const;
+const speeds = ["46s", "54s", "40s"];
+---
+
+<section class="px-3 py-8 md:px-5 md:py-[60px]">
+  <div class="mx-auto max-w-[1512px] overflow-hidden rounded-[32px] bg-[#0e0a08] py-16 md:rounded-[48px] md:py-[90px]">
+    <div class="mx-auto max-w-[1324px] px-5 md:px-6">
+      <div class="mx-auto flex max-w-[800px] flex-col items-center gap-1.5 text-center">
+        <PillLabel class="pill-dark">{testimonialsHeading.label}</PillLabel>
+        <h2 class="section-title !text-white max-sm:!text-[32px]" set:html={accent(testimonialsHeading.title)}></h2>
+        <p class="section-sub !text-white/55 max-sm:!text-lg">{testimonialsHeading.sub}</p>
+      </div>
+
+      <div class="tw-grid mt-10 md:mt-14" aria-label="Client testimonials">
+        {columns.map((items, c) => (
+          <div class="tw-col">
+            <!-- three copies stacked, so the loop never shows a gap -->
+            <div class={`tw-scroll tw-scroll--${directions[c]}`} style={`animation-duration:${speeds[c]}`}>
+              {[0, 1, 2].map((copy) => (
+                <div class="tw-set" aria-hidden={copy > 0 ? "true" : undefined}>
+                  {items.map((t) => (
+                    <figure class="tw-card">
+                      <div class="tw-card-inner">
+                        <blockquote class="tw-text">{t.quote}</blockquote>
+                        <figcaption class="tw-head">
+                          <span class="tw-person">
+                            <span class="tw-avatar">{initials(t.name)}</span>
+                            <span class="tw-name">{t.name}<span class="tw-role"> · {t.role}</span></span>
+                          </span>
+                          <svg class="tw-quote" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                            <path d="M9.6 5C6.5 6.4 4.5 9.3 4.5 12.8V19h6.2v-6.2H7.6c0-2 1-3.6 2.8-4.6L9.6 5zm9 0c-3.1 1.4-5.1 4.3-5.1 7.8V19h6.2v-6.2h-3.1c0-2 1-3.6 2.8-4.6L18.6 5z" />
+                          </svg>
+                        </figcaption>
+                      </div>
+                    </figure>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
