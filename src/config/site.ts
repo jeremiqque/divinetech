@@ -10,8 +10,8 @@ export const site = {
   tagline:
     "Premium aluminium, glass and roofing solutions crafted for modern homes, businesses and architectural spaces.",
 
-  // PLACEHOLDER: replace with the real logo file (put it in /public/ and update the path)
-  logo: { src: "/logo-placeholder.svg", alt: "Divintech Aluminium logo" },
+  // Icon (navbar, browser tab) and full logo with name (footer, on dark). Files live in /public/.
+  logo: { src: "/logo.png", wide: "/logo-wide.png", alt: "Divintech Aluminium logo" },
 
   // PLACEHOLDER: replace with real contact details
   contact: {

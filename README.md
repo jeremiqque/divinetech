@@ -65,7 +65,7 @@ Leave `endpoint` empty to use WhatsApp only.
 
 ## Still to replace before launch
 
-- **Logo:** put the real file in `public/` and update `logo` in `site.ts`. A white version suits the black footer.
+- **Logo:** done. `public/logo.png` (icon, navbar and browser tab) and `public/logo-wide.png` (with name, footer). To change, replace those files or update `logo` in `site.ts`.
 - **Address and email:** add them to `contact` in `site.ts` (the address shows on the Contact page).
 - **TikTok link:** set `social.tiktok` in `site.ts`. Use `""` to hide the icon.
 - **Testimonials:** the ones in `site.ts` are fictional. Replace them with real client quotes.
